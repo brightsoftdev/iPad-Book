@@ -44,7 +44,7 @@
     textSets = [pageText componentsSeparatedByString:@"\n"];
     currentSet = 0;
     label.text = [textSets objectAtIndex:currentSet];
-    if ([self.dataObject isEqualToString:@"cover.png"]) {
+    if ([self.dataObject hasPrefix:@"cover"]) {
         [scrollView setHidden:YES];
         currentSet = 1;
     }

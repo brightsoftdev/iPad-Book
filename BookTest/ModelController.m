@@ -34,8 +34,8 @@
     self = [super init];
     if (self) {
         // Create the data model.
-        _pageData = [NSArray arrayWithObjects:@"cover.png",@"p1-RGB.jpg",@"p2-RGB.jpg",@"p3-RGB.jpg",@"p4-RGB.jpg",@"p5-RGB.jpg",@"p6-RGB.jpg",@"p7-RGB.jpg",@"p8-RGB.jpg",@"p9-RGB.jpg",@"theend.png",nil];
-        NSString *manifestPath = [[NSBundle mainBundle]pathForResource:@"SugarBug" ofType:@"manifest"];
+        _pageData = [NSArray arrayWithObjects:@"cover.jpg",@"p1view.jpg",@"p2view.jpg",@"p3view.jpg",@"p4view.jpg",@"p5view.jpg",@"p6view.jpg",@"p7view.jpg",@"p8view.jpg",@"theend.png",nil];
+        NSString *manifestPath = [[NSBundle mainBundle]pathForResource:@"Dentist" ofType:@"manifest"];
         NSString *rawText = [NSString stringWithContentsOfFile:manifestPath encoding:NSUTF8StringEncoding error:nil];
         _pageText = [rawText componentsSeparatedByString:@"\nPPP\n"];
     }
