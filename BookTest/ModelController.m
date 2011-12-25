@@ -9,7 +9,7 @@
 #import "ModelController.h"
 
 #import "DataViewController.h"
-
+#import "EndViewController.h"
 /*
  A controller object that manages a simple model -- a collection of month names.
  
@@ -21,24 +21,28 @@
 
 @interface ModelController()
 @property (readonly, strong, nonatomic) NSArray *pageData;
+@property (readonly, strong, nonatomic) NSArray *pageText;
 @end
 
 @implementation ModelController
 
 @synthesize pageData = _pageData;
+@synthesize pageText = _pageText;
 
 - (id)init
 {
     self = [super init];
     if (self) {
         // Create the data model.
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        _pageData = [[dateFormatter monthSymbols] copy];
+        _pageData = [NSArray arrayWithObjects:@"cover.png",@"p1-RGB.jpg",@"p2-RGB.jpg",@"p3-RGB.jpg",@"p4-RGB.jpg",@"p5-RGB.jpg",@"p6-RGB.jpg",@"p7-RGB.jpg",@"p8-RGB.jpg",@"p9-RGB.jpg",@"theend.png",nil];
+        NSString *manifestPath = [[NSBundle mainBundle]pathForResource:@"SugarBug" ofType:@"manifest"];
+        NSString *rawText = [NSString stringWithContentsOfFile:manifestPath encoding:NSUTF8StringEncoding error:nil];
+        _pageText = [rawText componentsSeparatedByString:@"\nPPP\n"];
     }
     return self;
 }
 
-- (DataViewController *)viewControllerAtIndex:(NSUInteger)index storyboard:(UIStoryboard *)storyboard
+- (UIViewController *)viewControllerAtIndex:(NSUInteger)index storyboard:(UIStoryboard *)storyboard
 {   
     // Return the data view controller for the given index.
     if (([self.pageData count] == 0) || (index >= [self.pageData count])) {
@@ -46,9 +50,23 @@
     }
     
     // Create a new view controller and pass suitable data.
+    
+    if (index == ([self.pageData count] - 1)) {
+        EndViewController  *endViewController = [storyboard instantiateViewControllerWithIdentifier:@"EndViewController"];
+        endViewController.modelController = self;
+        return endViewController;
+    }
+    
+    //Or if we're not at the end
     DataViewController *dataViewController = [storyboard instantiateViewControllerWithIdentifier:@"DataViewController"];
     dataViewController.dataObject = [self.pageData objectAtIndex:index];
+    dataViewController.pageText = [self.pageText objectAtIndex:index];
     return dataViewController;
+}
+
+- (void)startOver {
+    [pageViewController performSelector:@selector(_handleTapGesture:) withObject:nil];
+    
 }
 
 - (NSUInteger)indexOfViewController:(DataViewController *)viewController
@@ -62,8 +80,12 @@
 
 #pragma mark - Page View Controller Data Source
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+- (UIViewController *)pageViewController:(UIPageViewController *)lpageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
+    if ([(DataViewController *)viewController lastSet]) {
+        return nil; //If we're not done with all the text on this page, don't go back
+    }
+    
     NSUInteger index = [self indexOfViewController:(DataViewController *)viewController];
     if ((index == 0) || (index == NSNotFound)) {
         return nil;
@@ -73,8 +95,14 @@
     return [self viewControllerAtIndex:index storyboard:viewController.storyboard];
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+- (UIViewController *)pageViewController:(UIPageViewController *)lpageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
+    if ([(DataViewController *)viewController nextSet]) {
+        return nil; //If we're not done with all the text on this page, don't advance
+    }
+    
+    pageViewController = lpageViewController;
+    
     NSUInteger index = [self indexOfViewController:(DataViewController *)viewController];
     if (index == NSNotFound) {
         return nil;
@@ -82,7 +110,7 @@
     
     index++;
     if (index == [self.pageData count]) {
-        return nil;
+        return [self viewControllerAtIndex:0 storyboard:viewController.storyboard];
     }
     return [self viewControllerAtIndex:index storyboard:viewController.storyboard];
 }

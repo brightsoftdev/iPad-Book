@@ -10,7 +10,10 @@
 
 @class DataViewController;
 
-@interface ModelController : NSObject <UIPageViewControllerDataSource>
-- (DataViewController *)viewControllerAtIndex:(NSUInteger)index storyboard:(UIStoryboard *)storyboard;
+@interface ModelController : NSObject <UIPageViewControllerDataSource> {
+    UIPageViewController *pageViewController;
+}
+- (UIViewController *)viewControllerAtIndex:(NSUInteger)index storyboard:(UIStoryboard *)storyboard;
 - (NSUInteger)indexOfViewController:(DataViewController *)viewController;
+- (void)startOver;
 @end

@@ -46,12 +46,7 @@
     [self addChildViewController:self.pageViewController];
     [self.view addSubview:self.pageViewController.view];
 
-    // Set the page view controller's bounds using an inset rect so that self's view is visible around the edges of the pages.
-    CGRect pageViewRect = self.view.bounds;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        pageViewRect = CGRectInset(pageViewRect, 40.0, 40.0);
-    }
-    self.pageViewController.view.frame = pageViewRect;
+    self.pageViewController.view.frame = [[UIScreen mainScreen]bounds];
 
     [self.pageViewController didMoveToParentViewController:self];    
 
@@ -89,11 +84,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-    } else {
-        return YES;
-    }
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (ModelController *)modelController
